@@ -1,0 +1,19 @@
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/debug-1.11.1/ext/debug
+/Users/bradleyfindeis/.rbenv/versions/3.4.6/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/debug-1.11.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-qx0cv7 sitelibdir\=./.gem.20260202-46914-qx0cv7 clean
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/debug-1.11.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-qx0cv7 sitelibdir\=./.gem.20260202-46914-qx0cv7
+compiling debug.c
+compiling iseq_collector.c
+linking shared-object debug/debug.bundle
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/debug-1.11.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-qx0cv7 sitelibdir\=./.gem.20260202-46914-qx0cv7 install
+/opt/homebrew/bin/ginstall -c -m 0755 debug.bundle ./.gem.20260202-46914-qx0cv7/debug
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/debug-1.11.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-qx0cv7 sitelibdir\=./.gem.20260202-46914-qx0cv7 clean

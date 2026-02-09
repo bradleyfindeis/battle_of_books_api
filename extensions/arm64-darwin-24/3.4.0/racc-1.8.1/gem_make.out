@@ -1,0 +1,18 @@
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/racc-1.8.1/ext/racc/cparse
+/Users/bradleyfindeis/.rbenv/versions/3.4.6/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-4575aa sitelibdir\=./.gem.20260202-46914-4575aa clean
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-4575aa sitelibdir\=./.gem.20260202-46914-4575aa
+compiling cparse.c
+linking shared-object racc/cparse.bundle
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-4575aa sitelibdir\=./.gem.20260202-46914-4575aa install
+/opt/homebrew/bin/ginstall -c -m 0755 cparse.bundle ./.gem.20260202-46914-4575aa/racc
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-4575aa sitelibdir\=./.gem.20260202-46914-4575aa clean

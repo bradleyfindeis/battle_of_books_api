@@ -1,0 +1,19 @@
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/stringio-3.2.0/ext/stringio
+/Users/bradleyfindeis/.rbenv/versions/3.4.6/bin/ruby extconf.rb
+checking for rb_io_mode_t in ruby/io.h... no
+creating Makefile
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-pvfopv sitelibdir\=./.gem.20260202-46914-pvfopv clean
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-pvfopv sitelibdir\=./.gem.20260202-46914-pvfopv
+compiling stringio.c
+linking shared-object stringio.bundle
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-pvfopv sitelibdir\=./.gem.20260202-46914-pvfopv install
+/opt/homebrew/bin/ginstall -c -m 0755 stringio.bundle ./.gem.20260202-46914-pvfopv
+
+current directory: /Users/bradleyfindeis/Documents/projects/battle_of_books_api/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260202-46914-pvfopv sitelibdir\=./.gem.20260202-46914-pvfopv clean
