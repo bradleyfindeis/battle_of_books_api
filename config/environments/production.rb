@@ -75,6 +75,11 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # Allow Action Cable (WebSocket) connections from the frontend. Set FRONTEND_URL on Render.
+  if ENV["FRONTEND_URL"].present?
+    config.action_cable.allowed_request_origins = [ENV["FRONTEND_URL"].to_s.strip]
+  end
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com

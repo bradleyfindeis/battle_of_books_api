@@ -78,21 +78,21 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# Production: DATABASE_URL must be set (e.g. from Render). Use Internal Database URL
+# so the API connects over Render's private network. Do not mix url with host-less
+# database/username/password or the client will try a local socket and fail.
 production:
   primary: &primary_production
     <<: *default
-    database: battle_of_books_api_production
-    username: battle_of_books_api
-    password: <%= ENV["BATTLE_OF_BOOKS_API_DATABASE_PASSWORD"] %>
+    <% db_url = ENV["DATABASE_URL"] %>
+    <% db_url = db_url.sub(/\Apostgres:\/\//, "postgresql://") if db_url %>
+    url: <%= db_url %>
   cache:
     <<: *primary_production
-    database: battle_of_books_api_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: battle_of_books_api_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: battle_of_books_api_production_cable
     migrations_paths: db/cable_migrate
