@@ -64,6 +64,7 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
+# Start server with Puma (respects PORT, e.g. on Render). Use 0.0.0.0 so the server is reachable outside the container.
+# db:prepare runs in CMD so it still runs when using shell form (entrypoint only sees "sh -c ...").
 EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+CMD ["sh", "-c", "./bin/rails db:prepare && exec ./bin/rails server -b 0.0.0.0 -p ${PORT:-3000}"]
