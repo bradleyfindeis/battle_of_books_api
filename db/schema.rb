@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_08_200000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_15_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "activity_days", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "activity_date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "activity_date"], name: "index_activity_days_on_user_id_and_activity_date", unique: true
+    t.index ["user_id"], name: "index_activity_days_on_user_id"
+  end
 
   create_table "admins", force: :cascade do |t|
     t.string "email"
@@ -29,6 +38,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_08_200000) do
     t.text "progress_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "progress_percent", default: 0, null: false
     t.index ["book_id"], name: "index_book_assignments_on_book_id"
     t.index ["user_id", "book_id"], name: "index_book_assignments_on_user_id_and_book_id", unique: true
     t.index ["user_id"], name: "index_book_assignments_on_user_id"
@@ -58,6 +68,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_08_200000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_books_on_team_id"
+  end
+
+  create_table "daily_question_answers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "answer_date", null: false
+    t.bigint "quiz_question_id", null: false
+    t.bigint "chosen_book_list_item_id", null: false
+    t.boolean "correct", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chosen_book_list_item_id"], name: "index_daily_question_answers_on_chosen_book_list_item_id"
+    t.index ["quiz_question_id"], name: "index_daily_question_answers_on_quiz_question_id"
+    t.index ["user_id", "answer_date"], name: "index_daily_question_answers_on_user_id_and_answer_date", unique: true
+    t.index ["user_id"], name: "index_daily_question_answers_on_user_id"
   end
 
   create_table "invite_codes", force: :cascade do |t|
@@ -149,6 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_08_200000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "book_list_id"
+    t.boolean "leaderboard_enabled", default: true, null: false
     t.index ["book_list_id"], name: "index_teams_on_book_list_id"
     t.index ["invite_code_id"], name: "index_teams_on_invite_code_id"
   end
@@ -162,14 +187,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_08_200000) do
     t.bigint "team_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "avatar_emoji", limit: 10
     t.index ["team_id"], name: "index_users_on_team_id"
   end
 
+  add_foreign_key "activity_days", "users"
   add_foreign_key "book_assignments", "books"
   add_foreign_key "book_assignments", "users"
   add_foreign_key "book_assignments", "users", column: "assigned_by_id"
   add_foreign_key "book_list_items", "book_lists"
   add_foreign_key "books", "teams"
+  add_foreign_key "daily_question_answers", "book_list_items", column: "chosen_book_list_item_id"
+  add_foreign_key "daily_question_answers", "quiz_questions"
+  add_foreign_key "daily_question_answers", "users"
   add_foreign_key "invite_codes", "admins"
   add_foreign_key "quiz_attempts", "book_lists"
   add_foreign_key "quiz_attempts", "users"

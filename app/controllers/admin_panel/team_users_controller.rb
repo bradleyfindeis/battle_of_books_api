@@ -3,7 +3,7 @@
 module AdminPanel
   class TeamUsersController < BaseController
     before_action :set_team
-    before_action :set_user, only: [:update, :destroy]
+    before_action :set_user, only: [:update, :destroy, :reset_credential]
 
     # POST /admin/teams/:team_id/users
     def create
@@ -63,6 +63,35 @@ module AdminPanel
     def destroy
       @user.destroy
       head :no_content
+    end
+
+    # POST /admin/teams/:team_id/users/:id/reset_credential
+    def reset_credential
+      if @user.team_lead?
+        new_password = params[:new_password].to_s
+        if new_password.blank?
+          return render json: { errors: ["Password can't be blank"] }, status: :unprocessable_entity
+        end
+        if new_password.length < 6
+          return render json: { errors: ['Password must be at least 6 characters'] }, status: :unprocessable_entity
+        end
+        @user.update!(pin_code: new_password, pin_reset_required: false)
+        render json: { user: UserSerializer.new(@user).as_json }
+      else
+        new_pin = params[:new_pin].to_s
+        if new_pin.present?
+          unless new_pin.match?(/\A\d{4}\z/)
+            return render json: { errors: ['PIN must be exactly 4 digits'] }, status: :unprocessable_entity
+          end
+          @user.update!(pin_code: new_pin, pin_reset_required: false)
+          render json: { user: UserSerializer.new(@user).as_json }
+        else
+          generated_pin = @user.generate_pin!
+          render json: { user: UserSerializer.new(@user).as_json, pin: generated_pin }
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
     end
 
     private

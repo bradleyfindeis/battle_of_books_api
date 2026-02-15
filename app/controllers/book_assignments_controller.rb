@@ -37,6 +37,7 @@ class BookAssignmentsController < ApplicationController
       return render json: { error: 'Forbidden' }, status: :forbidden
     end
     if @assignment.update(assignment_params)
+      @current_user.log_activity!
       render json: BookAssignmentSerializer.new(@assignment).as_json
     else
       render json: { errors: @assignment.errors.full_messages }, status: :unprocessable_entity
@@ -57,6 +58,6 @@ class BookAssignmentsController < ApplicationController
     render json: { error: 'Assignment not found' }, status: :not_found
   end
   def assignment_params
-    params.permit(:status, :progress_notes)
+    params.permit(:status, :progress_notes, :progress_percent)
   end
 end

@@ -4,6 +4,7 @@ class BookAssignment < ApplicationRecord
   belongs_to :assigned_by, class_name: 'User'
   enum :status, { assigned: 0, in_progress: 1, completed: 2 }
   validates :user_id, uniqueness: { scope: :book_id, message: 'already has this book assigned' }
+  validates :progress_percent, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
   validate :same_team
   attribute :status, default: :assigned
 

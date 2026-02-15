@@ -67,6 +67,7 @@ class QuizController < ApplicationController
       )
     end
 
+    @current_user.log_activity!
     high_score = @current_user.quiz_attempts.where(book_list_id: book_list_id).maximum(:correct_count)
     render json: { high_score: high_score, attempt_id: attempt.id }
   end

@@ -5,9 +5,21 @@ class QuizMatchesController < ApplicationController
   before_action :set_quiz_match, only: [:show, :join, :answer, :timeout, :decline]
   before_action :authorize_participant!, only: [:show, :join, :answer, :timeout, :decline]
 
+  def history
+    matches = QuizMatch
+      .for_user(@current_user)
+      .where(status: :completed)
+      .order(created_at: :desc)
+      .limit(50)
+      .includes(:challenger, :opponent, :invited_opponent)
+
+    render json: matches.map { |m| QuizMatchPayloadBuilder.build(m).merge(created_at: m.created_at.iso8601) }
+  end
+
   def challengeable_teammates
     teammates = @current_user.team.teammates.where.not(id: @current_user.id).order(:username)
-    render json: teammates.map { |u| { id: u.id, username: u.username } }
+    online_ids = PresenceTracker.online_user_ids(@current_user.team_id)
+    render json: teammates.map { |u| { id: u.id, username: u.username, avatar_emoji: u.avatar_emoji, online: online_ids.include?(u.id) } }
   end
 
   def pending_invite
@@ -58,6 +70,7 @@ class QuizMatchesController < ApplicationController
       questions_payload: questions_payload
     )
 
+    @current_user.log_activity!
     broadcast_match_state(match)
     render json: QuizMatchPayloadBuilder.build(match), status: :created
   end
@@ -76,6 +89,7 @@ class QuizMatchesController < ApplicationController
       phase_entered_at: Time.current
     )
 
+    @current_user.log_activity!
     broadcast_match_state(@quiz_match)
     render json: QuizMatchPayloadBuilder.build(@quiz_match)
   end

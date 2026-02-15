@@ -4,6 +4,6 @@ class UserSerializer
   end
 
   def as_json(*)
-    { id: @user.id, username: @user.username, email: @user.email, role: @user.role, team_id: @user.team_id, pin_reset_required: @user.pin_reset_required }
+    { id: @user.id, username: @user.username, email: @user.email, role: @user.role, team_id: @user.team_id, pin_reset_required: @user.pin_reset_required, avatar_emoji: @user.avatar_emoji }
   end
 end

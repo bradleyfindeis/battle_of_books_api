@@ -9,6 +9,7 @@ class TeamSerializer
     data = { id: @team.id, name: @team.name, created_at: @team.created_at, teammate_count: @team.teammates.size }
     data[:book_list_id] = @team.book_list_id
     data[:book_list] = @team.book_list ? { id: @team.book_list.id, name: @team.book_list.name } : nil
+    data[:leaderboard_enabled] = @team.leaderboard_enabled
     if @admin
       data[:invite_code] = @team.invite_code&.code
       data[:invite_code_id] = @team.invite_code_id

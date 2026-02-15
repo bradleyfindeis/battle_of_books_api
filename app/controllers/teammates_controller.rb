@@ -41,8 +41,17 @@ class TeammatesController < ApplicationController
   end
 
   def reset_pin
-    pin = @teammate.generate_pin!
-    render json: { user: UserSerializer.new(@teammate).as_json, pin: pin, message: "New PIN generated for #{@teammate.username}: #{pin}" }
+    new_pin = params[:new_pin].to_s
+    if new_pin.present?
+      unless new_pin.match?(/\A\d{4}\z/)
+        return render json: { error: 'PIN must be exactly 4 digits' }, status: :unprocessable_entity
+      end
+      @teammate.update!(pin_code: new_pin, pin_reset_required: false)
+      pin = new_pin
+    else
+      pin = @teammate.generate_pin!
+    end
+    render json: { user: UserSerializer.new(@teammate).as_json, pin: pin, message: "PIN updated for #{@teammate.username}: #{pin}" }
   end
 
   private
