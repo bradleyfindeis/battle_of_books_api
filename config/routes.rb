@@ -49,13 +49,16 @@ Rails.application.routes.draw do
   resources :book_assignments, only: [:index, :create, :update, :destroy]
   get '/my_books', to: 'book_assignments#my_books'
   patch '/my_team', to: 'teams#update_my_team'
+  post '/create_team', to: 'teams#create_team'
 
   namespace :admin_panel, path: 'admin' do
     post '/login', to: 'auth#login'
     get '/stats', to: 'dashboard#stats'
     post '/demo_teammate', to: 'dashboard#demo_teammate'
     resources :invite_codes
+    get '/team_leads', to: 'team_leads#index'
     resources :teams, only: [:index, :show, :create, :update, :destroy] do
+      post :assign_existing_lead, on: :member
       resources :users, only: [:create, :update, :destroy], controller: 'team_users', param: :id do
         post :reset_credential, on: :member
       end

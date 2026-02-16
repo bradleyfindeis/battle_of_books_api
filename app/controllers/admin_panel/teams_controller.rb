@@ -1,6 +1,6 @@
 module AdminPanel
   class TeamsController < BaseController
-    before_action :set_team, only: [:update, :destroy]
+    before_action :set_team, only: [:update, :destroy, :assign_existing_lead]
 
     def index
       teams = Team.includes(:team_lead, :teammates, :invite_code).order(created_at: :desc)
@@ -50,6 +50,39 @@ module AdminPanel
       head :no_content
     rescue ActiveRecord::RecordNotFound
       render json: { error: 'Team not found' }, status: :not_found
+    end
+
+    # POST /admin/teams/:id/assign_existing_lead
+    def assign_existing_lead
+      source_user = User.where(role: :team_lead).find_by(id: params[:user_id])
+      unless source_user
+        return render json: { error: 'Team lead not found' }, status: :not_found
+      end
+
+      managed_count = User.where(role: :team_lead, email: source_user.email).count
+      if managed_count >= 2
+        return render json: { error: 'This team lead already manages 2 teams' }, status: :unprocessable_entity
+      end
+
+      if @team.users.exists?(role: :team_lead, email: source_user.email)
+        return render json: { error: 'This team lead is already on this team' }, status: :unprocessable_entity
+      end
+
+      ActiveRecord::Base.transaction do
+        @team.team_lead&.update!(role: :teammate)
+
+        @team.users.create!(
+          username: source_user.username,
+          email: source_user.email,
+          pin_code_digest: source_user.pin_code_digest,
+          role: :team_lead,
+          pin_reset_required: false
+        )
+      end
+
+      render json: TeamSerializer.new(@team.reload, admin: true, include_details: true).as_json
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
     end
 
     private
