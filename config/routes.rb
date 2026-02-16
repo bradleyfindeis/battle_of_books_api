@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get '/teams', to: 'registrations#teams'
 
   get '/me', to: 'users#me'
+  get '/my_teams', to: 'users#my_teams'
+  post '/switch_team', to: 'users#switch_team'
   get '/my_streak', to: 'users#my_streak'
   get '/my_badges', to: 'users#my_badges'
   get '/my_weekly_summary', to: 'users#my_weekly_summary'

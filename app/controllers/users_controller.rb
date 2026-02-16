@@ -4,7 +4,56 @@ class UsersController < ApplicationController
   def me
     team = @current_user.team
     team.resolve_book_list! # backfill book_list_id from team's books if missing
-    render json: { user: UserSerializer.new(@current_user).as_json, team: TeamSerializer.new(team.reload, include_details: @current_user.team_lead?).as_json }
+    response = {
+      user: UserSerializer.new(@current_user).as_json,
+      team: TeamSerializer.new(team.reload, include_details: @current_user.team_lead?).as_json
+    }
+    if @current_user.team_lead? && @current_user.email.present?
+      response[:managed_teams] = User.where(role: :team_lead, email: @current_user.email)
+                                     .includes(:team)
+                                     .map { |u| { id: u.team.id, name: u.team.name } }
+    end
+    render json: response
+  end
+
+  def my_teams
+    return render json: [] unless @current_user.team_lead? && @current_user.email.present?
+
+    teams = User.where(role: :team_lead, email: @current_user.email)
+                .includes(:team)
+                .map { |u| { id: u.team.id, name: u.team.name } }
+
+    render json: teams
+  end
+
+  def switch_team
+    return render json: { error: 'Forbidden' }, status: :forbidden unless @current_user.team_lead?
+
+    target_user = User.find_by(
+      role: :team_lead,
+      email: @current_user.email,
+      team_id: params[:team_id]
+    )
+
+    unless target_user
+      return render json: { error: 'Team not found or access denied' }, status: :not_found
+    end
+
+    token = AuthService.encode(user_id: target_user.id)
+    team = target_user.team
+    team.resolve_book_list!
+
+    managed_teams = User.where(role: :team_lead, email: target_user.email)
+                        .includes(:team)
+                        .map { |u| { id: u.team.id, name: u.team.name } }
+
+    render json: {
+      token: token,
+      user: UserSerializer.new(target_user).as_json,
+      team: TeamSerializer.new(team.reload, include_details: true).as_json,
+      pin_reset_required: target_user.pin_reset_required,
+      managed_teams: managed_teams
+    }
   end
 
   def my_streak
