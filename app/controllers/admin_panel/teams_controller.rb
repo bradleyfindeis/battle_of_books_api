@@ -60,8 +60,8 @@ module AdminPanel
       end
 
       managed_count = User.where(role: :team_lead, email: source_user.email).count
-      if managed_count >= 2
-        return render json: { error: 'This team lead already manages 2 teams' }, status: :unprocessable_entity
+      if managed_count >= 6
+        return render json: { error: 'This team lead already manages 6 teams' }, status: :unprocessable_entity
       end
 
       if @team.users.exists?(role: :team_lead, email: source_user.email)

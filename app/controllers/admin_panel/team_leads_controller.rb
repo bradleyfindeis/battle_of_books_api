@@ -11,7 +11,7 @@ module AdminPanel
       email_counts = leads.group(:email).count
 
       result = leads
-        .select { |u| (email_counts[u.email] || 0) < 2 }
+        .select { |u| (email_counts[u.email] || 0) < 6 }
         .map do |u|
           {
             id: u.id,

@@ -7,8 +7,8 @@ class TeamsController < ApplicationController
   # POST /create_team
   def create_team
     managed_count = User.where(role: :team_lead, email: @current_user.email).count
-    if managed_count >= 2
-      return render json: { error: 'You already manage 2 teams' }, status: :unprocessable_entity
+    if managed_count >= 6
+      return render json: { error: 'You already manage 6 teams' }, status: :unprocessable_entity
     end
 
     invite_code = InviteCode.find_by(code: params[:invite_code]&.upcase)
