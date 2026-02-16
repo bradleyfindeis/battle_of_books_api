@@ -77,6 +77,7 @@ class LeaderboardController < ApplicationController
         user_id: u.id,
         username: u.username,
         avatar_emoji: u.avatar_emoji,
+        avatar_color: u.avatar_color,
         role: u.role,
         quiz_high_score: qd&.high_score.to_i,
         quiz_avg_score: qd&.avg_score.to_f,

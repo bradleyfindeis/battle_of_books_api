@@ -19,7 +19,7 @@ class QuizMatchesController < ApplicationController
   def challengeable_teammates
     teammates = @current_user.team.teammates.where.not(id: @current_user.id).order(:username)
     online_ids = PresenceTracker.online_user_ids(@current_user.team_id)
-    render json: teammates.map { |u| { id: u.id, username: u.username, avatar_emoji: u.avatar_emoji, online: online_ids.include?(u.id) } }
+    render json: teammates.map { |u| { id: u.id, username: u.username, avatar_emoji: u.avatar_emoji, avatar_color: u.avatar_color, online: online_ids.include?(u.id) } }
   end
 
   def pending_invite

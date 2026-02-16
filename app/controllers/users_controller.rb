@@ -19,12 +19,17 @@ class UsersController < ApplicationController
   end
 
   def update_avatar
+    attrs = {}
+
     emoji = params[:avatar_emoji].to_s.strip
-    if emoji.blank?
-      @current_user.update!(avatar_emoji: nil)
-    else
-      @current_user.update!(avatar_emoji: emoji)
+    attrs[:avatar_emoji] = emoji.blank? ? nil : emoji
+
+    if params.key?(:avatar_color)
+      color = params[:avatar_color].to_s.strip
+      attrs[:avatar_color] = color.match?(/\A#[0-9a-fA-F]{6}\z/) ? color : nil
     end
+
+    @current_user.update!(attrs)
     render json: UserSerializer.new(@current_user).as_json
   end
 
@@ -182,6 +187,7 @@ class UsersController < ApplicationController
         user_id: u.id,
         username: u.username,
         avatar_emoji: u.avatar_emoji,
+        avatar_color: u.avatar_color,
         books_assigned: total,
         books_completed: done,
         avg_progress: pct
