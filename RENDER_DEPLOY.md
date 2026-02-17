@@ -8,7 +8,7 @@ Get the API, database, Redis, and frontend running on Render.
 
 - In the Render dashboard: **New → Postgres**.
 - Name it (e.g. `battle-of-books-db`), choose region, create.
-- After it’s created, open it and copy the **Internal Database URL** (use this so the API and DB stay on Render’s private network).
+- After it's created, open it and copy the **Internal Database URL** (use this so the API and DB stay on Render's private network).
 
 ---
 
@@ -45,8 +45,9 @@ Get the API, database, Redis, and frontend running on Render.
 | `FRONTEND_URL` | `https://<your-frontend>.onrender.com` | Your Static Site URL (create in step 5 first, then come back and set this) |
 | `OPENAI_API_KEY` | *(optional)* | Only if you use quiz challenge AI |
 
-- **Advanced → Add Environment Group**: attach the Postgres database and the Redis instance so Render can inject `DATABASE_URL` and `REDIS_URL` (recommended). If you don't, set `DATABASE_URL` and `REDIS_URL` manually—without `DATABASE_URL`, the deploy fails with a PostgreSQL socket error during `db:prepare`.
-- **Release Command**: With Docker, the image’s entrypoint runs `bin/rails db:prepare` on boot, so you can leave Release Command blank. If you use **Native** (no Docker), set Release Command to: `bin/rails db:migrate`
+- **Advanced → Add Environment Group**: attach the Postgres database and the Redis instance so Render can inject `DATABASE_URL` and `REDIS_URL` (recommended). If you don't, set `DATABASE_URL` and `REDIS_URL` manually — without `DATABASE_URL`, the deploy fails with a PostgreSQL socket error during `db:prepare`.
+- **Pre-Deploy Command** (required): `./bin/rails db:prepare`
+  This runs migrations before the new container starts serving traffic, so the server can bind to the port immediately and pass Render's health check. Without this, the deploy will time out.
 - **Start Command**: Leave default when using Docker. If you use **Native** instead of Docker, use:  
   `bundle exec rails server -p $PORT -b 0.0.0.0`
 - Create the Web Service. After the first deploy, copy the API URL (e.g. `https://battle-of-books-api.onrender.com`).
@@ -90,7 +91,7 @@ The API allows any origin (`origins '*'`). To restrict in production, in `config
 From your machine (or a one-off shell if Render provides it):
 
 - Ensure the API is deployed and migrations have run.
-- **From your local machine:** you must use the **External Database URL** (Render Postgres → Connections → "External Database URL"). The Internal URL only works from inside Render’s network.
+- **From your local machine:** you must use the **External Database URL** (Render Postgres → Connections → "External Database URL"). The Internal URL only works from inside Render's network.
 - **From Render Shell** (if your plan has it): use the Internal URL; env vars are already set.
 
 ```bash

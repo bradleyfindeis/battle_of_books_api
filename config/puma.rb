@@ -27,6 +27,10 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
+# Specifies the number of `workers` to boot in clustered mode.
+# Default to single mode (0 workers) to avoid unnecessary overhead on small instances.
+workers ENV.fetch("WEB_CONCURRENCY", 0)
+
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("PORT", 3000)
 

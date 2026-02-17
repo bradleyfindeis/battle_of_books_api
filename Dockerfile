@@ -65,6 +65,6 @@ USER 1000:1000
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server with Puma (respects PORT, e.g. on Render). Use 0.0.0.0 so the server is reachable outside the container.
-# db:prepare runs in CMD so it still runs when using shell form (entrypoint only sees "sh -c ...").
+# db:prepare is handled by Render's Pre-Deploy Command so the server binds to the port immediately.
 EXPOSE 80
-CMD ["sh", "-c", "./bin/rails db:prepare && exec ./bin/rails server -b 0.0.0.0 -p ${PORT:-3000}"]
+CMD ["sh", "-c", "exec ./bin/rails server -b 0.0.0.0 -p ${PORT:-3000}"]
