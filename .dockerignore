@@ -37,6 +37,16 @@
 /config/deploy*.yml
 /.kamal
 
+# Ignore local bundler artifacts (bundle install already runs in the Dockerfile)
+/gems
+/cache
+/extensions
+/specifications
+/plugins
+/build_info
+/doc
+/script
+
 # Ignore development files
 /.devcontainer
 

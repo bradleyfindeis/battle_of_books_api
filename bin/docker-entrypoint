@@ -6,4 +6,21 @@ if [ -z "${LD_PRELOAD+x}" ]; then
     export LD_PRELOAD
 fi
 
+# If running the rails server, prepare the database first.
+if [ "${1}" == "./bin/rails" ] || [ "${1}" == "sh" ]; then
+    echo "==> Running db:prepare (migrate + create if needed)..."
+    ./bin/rails db:prepare
+
+    # Seed if no questions exist or if FORCE_SEED=true
+    QUESTION_COUNT=$(./bin/rails runner "print QuizQuestion.count" 2>/dev/null || echo "0")
+    if [ "$QUESTION_COUNT" = "0" ] || [ "$FORCE_SEED" = "true" ]; then
+        echo "==> Running db:seed (questions: ${QUESTION_COUNT}, FORCE_SEED: ${FORCE_SEED:-false})..."
+        ./bin/rails db:seed
+    else
+        echo "==> Skipping seed (${QUESTION_COUNT} questions already exist). Set FORCE_SEED=true to re-seed."
+    fi
+
+    echo "==> Database ready!"
+fi
+
 exec "${@}"
