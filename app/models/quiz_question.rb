@@ -4,6 +4,7 @@ class QuizQuestion < ApplicationRecord
   belongs_to :book_list
   belongs_to :correct_book_list_item, class_name: 'BookListItem'
   has_many :quiz_challenges, dependent: :destroy
+  has_many :daily_question_answers, dependent: :destroy
 
   enum :difficulty, { easy: 0, medium: 1, hard: 2 }
 
