@@ -54,6 +54,7 @@ module AdminPanel
         end
       end
 
+      set_user_auth_cookies(demo_user)
       token = AuthService.encode(user_id: demo_user.id)
       render json: {
         token: token,

@@ -8,6 +8,12 @@ Rails.application.routes.draw do
   get '/validate_code/:code', to: 'registrations#validate_code'
   get '/teams', to: 'registrations#teams'
 
+  # Session management (httpOnly cookie auth)
+  get '/auth/session', to: 'session#check'
+  post '/auth/refresh', to: 'session#refresh'
+  delete '/auth/logout', to: 'session#logout'
+  delete '/auth/user_session', to: 'session#clear_user_session'
+
   get '/me', to: 'users#me'
   get '/my_teams', to: 'users#my_teams'
   post '/switch_team', to: 'users#switch_team'
@@ -53,6 +59,7 @@ Rails.application.routes.draw do
 
   namespace :admin_panel, path: 'admin' do
     post '/login', to: 'auth#login'
+    get '/me', to: 'auth#me'
     get '/stats', to: 'dashboard#stats'
     post '/demo_teammate', to: 'dashboard#demo_teammate'
     resources :invite_codes

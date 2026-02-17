@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :assignments_given, class_name: 'BookAssignment', foreign_key: :assigned_by_id
   has_many :activity_days, dependent: :destroy
   has_many :daily_question_answers, dependent: :destroy
+  has_many :refresh_tokens, dependent: :destroy
   enum :role, { teammate: 0, team_lead: 1 }
   validates :username, presence: true, uniqueness: { scope: :team_id }
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }, if: :team_lead?

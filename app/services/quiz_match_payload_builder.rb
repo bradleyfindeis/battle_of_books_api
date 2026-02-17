@@ -44,6 +44,7 @@ class QuizMatchPayloadBuilder
       opponent_score: match.opponent_score,
       current_question_index: match.current_question_index,
       total_questions: QuizMatch::QUESTIONS_COUNT,
+      difficulty: match.difficulty,
       current_question: current_question
     }
     if match.respond_to?(:phase_entered_at) && match.phase_entered_at.present? &&

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_010000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_18_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -145,6 +145,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_010000) do
     t.datetime "phase_entered_at"
     t.jsonb "question_results", default: [], null: false
     t.jsonb "current_steal_context"
+    t.string "difficulty"
     t.index ["book_list_id"], name: "index_quiz_matches_on_book_list_id"
     t.index ["challenger_id", "status"], name: "index_quiz_matches_on_challenger_id_and_status"
     t.index ["challenger_id"], name: "index_quiz_matches_on_challenger_id"
@@ -163,8 +164,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_010000) do
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "difficulty", default: 0, null: false
+    t.index ["book_list_id", "difficulty"], name: "index_quiz_questions_on_book_list_id_and_difficulty"
     t.index ["book_list_id"], name: "index_quiz_questions_on_book_list_id"
     t.index ["correct_book_list_item_id"], name: "index_quiz_questions_on_correct_book_list_item_id"
+  end
+
+  create_table "refresh_tokens", force: :cascade do |t|
+    t.string "token_digest", null: false
+    t.bigint "user_id"
+    t.bigint "admin_id"
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_refresh_tokens_on_admin_id"
+    t.index ["expires_at"], name: "index_refresh_tokens_on_expires_at"
+    t.index ["token_digest"], name: "index_refresh_tokens_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -216,6 +233,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_010000) do
   add_foreign_key "quiz_matches", "users", column: "opponent_id"
   add_foreign_key "quiz_questions", "book_list_items", column: "correct_book_list_item_id"
   add_foreign_key "quiz_questions", "book_lists"
+  add_foreign_key "refresh_tokens", "admins"
+  add_foreign_key "refresh_tokens", "users"
   add_foreign_key "teams", "book_lists"
   add_foreign_key "teams", "invite_codes"
   add_foreign_key "users", "teams"

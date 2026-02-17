@@ -21,6 +21,7 @@ class RegistrationsController < ApplicationController
       user.pin_code = password
       user.save!
       invite_code.use!
+      set_user_auth_cookies(user)
       token = AuthService.encode(user_id: user.id)
       render json: { token: token, user: UserSerializer.new(user).as_json, team: TeamSerializer.new(team).as_json }, status: :created
     end

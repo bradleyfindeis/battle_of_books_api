@@ -49,10 +49,14 @@ class QuizMatchesController < ApplicationController
       return
     end
 
+    difficulty = params[:difficulty].presence
+    difficulty = nil unless %w[easy medium hard].include?(difficulty)
+
     questions_payload = QuizMatchQuestionBuilder.build(
       challenger: @current_user,
       opponent: opponent,
-      book_list: book_list
+      book_list: book_list,
+      difficulty: difficulty
     )
 
     if questions_payload.size != QuizMatch::QUESTIONS_COUNT
@@ -67,7 +71,8 @@ class QuizMatchesController < ApplicationController
       book_list: book_list,
       status: :pending,
       phase: :waiting_opponent,
-      questions_payload: questions_payload
+      questions_payload: questions_payload,
+      difficulty: difficulty
     )
 
     @current_user.log_activity!

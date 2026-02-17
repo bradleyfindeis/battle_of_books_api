@@ -34,6 +34,7 @@ class TeamsController < ApplicationController
       new_user.save!
       invite_code.use!
 
+      set_user_auth_cookies(new_user)
       token = AuthService.encode(user_id: new_user.id)
       managed_teams = User.where(role: :team_lead, email: new_user.email)
                           .includes(:team)

@@ -3,6 +3,7 @@ class AuthController < ApplicationController
     user = User.joins(:team).find_by(username: params[:username], team_id: params[:team_id])
     credential = params[:password].presence || params[:pin_code]
     if user&.authenticate_pin_code(credential)
+      set_user_auth_cookies(user)
       token = AuthService.encode(user_id: user.id)
       render json: { token: token, user: UserSerializer.new(user).as_json, team: TeamSerializer.new(user.team).as_json, pin_reset_required: user.pin_reset_required }
     else

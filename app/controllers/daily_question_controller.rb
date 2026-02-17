@@ -33,6 +33,7 @@ class DailyQuestionController < ApplicationController
       available: true,
       question_id: question.id,
       question_text: question.question_text,
+      difficulty: question.difficulty,
       choices: choices,
       team_answered: team_answered_count,
       team_correct: team_correct_count

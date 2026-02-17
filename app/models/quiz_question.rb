@@ -5,8 +5,11 @@ class QuizQuestion < ApplicationRecord
   belongs_to :correct_book_list_item, class_name: 'BookListItem'
   has_many :quiz_challenges, dependent: :destroy
 
+  enum :difficulty, { easy: 0, medium: 1, hard: 2 }
+
   validates :question_text, presence: true
   validates :correct_book_list_item, presence: true
+  validates :difficulty, presence: true
   validate :correct_item_belongs_to_same_list
 
   private

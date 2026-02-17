@@ -11,7 +11,7 @@ module ApplicationCable
     private
 
     def find_verified_user
-      token = request.params[:token].presence || token_from_authorization
+      token = token_from_cookie || request.params[:token].presence || token_from_authorization
       decoded = AuthService.decode(token)
       user = User.find_by(id: decoded[:user_id]) if decoded
 
@@ -20,6 +20,10 @@ module ApplicationCable
       else
         reject_unauthorized_connection
       end
+    end
+
+    def token_from_cookie
+      cookies[:user_access_token]
     end
 
     def token_from_authorization

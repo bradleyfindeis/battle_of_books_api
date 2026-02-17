@@ -1,5 +1,9 @@
 class AdminAuthService
-  SECRET_KEY = (Rails.application.credentials.secret_key_base || 'dev-secret-key') + '_admin'
+  SECRET_KEY = if Rails.env.production?
+                 (Rails.application.credentials.secret_key_base || raise('SECRET_KEY_BASE must be set in production')) + '_admin'
+               else
+                 (Rails.application.credentials.secret_key_base || 'dev-secret-key') + '_admin'
+               end
 
   def self.encode(payload, exp = 8.hours.from_now)
     payload[:exp] = exp.to_i

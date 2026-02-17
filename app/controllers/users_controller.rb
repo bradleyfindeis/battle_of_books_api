@@ -39,6 +39,7 @@ class UsersController < ApplicationController
       return render json: { error: 'Team not found or access denied' }, status: :not_found
     end
 
+    set_user_auth_cookies(target_user)
     token = AuthService.encode(user_id: target_user.id)
     team = target_user.team
     team.resolve_book_list!

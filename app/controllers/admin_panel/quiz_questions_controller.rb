@@ -7,11 +7,17 @@ module AdminPanel
 
     def index
       questions = @book_list.quiz_questions.includes(:correct_book_list_item).order(:position)
+
+      if params[:difficulty].present? && %w[easy medium hard].include?(params[:difficulty])
+        questions = questions.where(difficulty: params[:difficulty])
+      end
+
       data = questions.map do |q|
         {
           id: q.id,
           question_text: q.question_text,
           position: q.position,
+          difficulty: q.difficulty,
           correct_book_list_item_id: q.correct_book_list_item_id,
           correct_book_list_item: BookListItemSerializer.new(q.correct_book_list_item).as_json
         }
@@ -57,7 +63,7 @@ module AdminPanel
     end
 
     def quiz_question_params
-      params.permit(:question_text, :correct_book_list_item_id)
+      params.permit(:question_text, :correct_book_list_item_id, :difficulty)
     end
 
     def quiz_question_json(q)
@@ -65,6 +71,7 @@ module AdminPanel
         id: q.id,
         question_text: q.question_text,
         position: q.position,
+        difficulty: q.difficulty,
         correct_book_list_item_id: q.correct_book_list_item_id,
         correct_book_list_item: BookListItemSerializer.new(q.correct_book_list_item).as_json
       }
