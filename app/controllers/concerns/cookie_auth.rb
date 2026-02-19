@@ -7,7 +7,7 @@ module CookieAuth
     opts = {
       httponly: true,
       secure: true,
-      same_site: :lax,
+      same_site: :none,
       path: '/'
     }
     opts[:max_age] = max_age if max_age
@@ -29,13 +29,13 @@ module CookieAuth
   end
 
   def clear_user_cookies
-    delete_opts = { path: '/', same_site: :lax, secure: true }
+    delete_opts = { path: '/', same_site: :none, secure: true }
     cookies.delete(:user_access_token, **delete_opts)
     cookies.delete(:user_refresh_token, **delete_opts)
   end
 
   def clear_admin_cookies
-    delete_opts = { path: '/', same_site: :lax, secure: true }
+    delete_opts = { path: '/', same_site: :none, secure: true }
     cookies.delete(:admin_access_token, **delete_opts)
     cookies.delete(:admin_refresh_token, **delete_opts)
   end
