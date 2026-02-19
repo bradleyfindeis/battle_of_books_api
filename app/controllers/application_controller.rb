@@ -5,25 +5,12 @@ class ApplicationController < ActionController::API
   private
 
   def authenticate_user!
-    # Try cookie first, then fall back to Authorization header
-    @current_user = current_user_from_cookie
-    unless @current_user
-      header = request.headers['Authorization']
-      token = header&.split(' ')&.last
-      decoded = AuthService.decode(token)
-      @current_user = User.find_by(id: decoded[:user_id]) if decoded
-    end
+    @current_user = current_user_from_cookie || refresh_user_session!
     render_unauthorized unless @current_user
   end
 
   def authenticate_admin!
-    @current_admin = current_admin_from_cookie
-    unless @current_admin
-      header = request.headers['Authorization']
-      token = header&.split(' ')&.last
-      decoded = AdminAuthService.decode(token)
-      @current_admin = Admin.find_by(id: decoded[:admin_id]) if decoded
-    end
+    @current_admin = current_admin_from_cookie || refresh_admin_session!
     render_unauthorized unless @current_admin
   end
 

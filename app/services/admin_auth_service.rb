@@ -8,7 +8,7 @@ class AdminAuthService
     base + '_admin'
   end
 
-  def self.encode(payload, exp = 8.hours.from_now)
+  def self.encode(payload, exp = 1.hour.from_now)
     payload[:exp] = exp.to_i
     payload[:type] = 'admin'
     JWT.encode(payload, secret_key)

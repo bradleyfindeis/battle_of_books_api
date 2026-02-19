@@ -7,7 +7,7 @@ module CookieAuth
     opts = {
       httponly: true,
       secure: true,
-      same_site: :none,
+      same_site: :lax,
       path: '/'
     }
     opts[:max_age] = max_age if max_age
@@ -17,25 +17,25 @@ module CookieAuth
   def set_user_auth_cookies(user)
     access_token = AuthService.encode(user_id: user.id)
     refresh_token = RefreshToken.generate_for_user(user)
-    cookies[:user_access_token] = cookie_options(max_age: 24.hours.to_i).merge(value: access_token)
+    cookies[:user_access_token] = cookie_options(max_age: 15.minutes.to_i).merge(value: access_token)
     cookies[:user_refresh_token] = cookie_options(max_age: 30.days.to_i).merge(value: refresh_token)
   end
 
   def set_admin_auth_cookies(admin)
     access_token = AdminAuthService.encode(admin_id: admin.id)
     refresh_token = RefreshToken.generate_for_admin(admin)
-    cookies[:admin_access_token] = cookie_options(max_age: 8.hours.to_i).merge(value: access_token)
+    cookies[:admin_access_token] = cookie_options(max_age: 1.hour.to_i).merge(value: access_token)
     cookies[:admin_refresh_token] = cookie_options(max_age: 30.days.to_i).merge(value: refresh_token)
   end
 
   def clear_user_cookies
-    delete_opts = { path: '/', same_site: :none, secure: true }
+    delete_opts = { path: '/', same_site: :lax, secure: true }
     cookies.delete(:user_access_token, **delete_opts)
     cookies.delete(:user_refresh_token, **delete_opts)
   end
 
   def clear_admin_cookies
-    delete_opts = { path: '/', same_site: :none, secure: true }
+    delete_opts = { path: '/', same_site: :lax, secure: true }
     cookies.delete(:admin_access_token, **delete_opts)
     cookies.delete(:admin_refresh_token, **delete_opts)
   end

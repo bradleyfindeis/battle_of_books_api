@@ -7,7 +7,7 @@ class AuthService
     end
   end
 
-  def self.encode(payload, exp = 24.hours.from_now)
+  def self.encode(payload, exp = 15.minutes.from_now)
     payload[:exp] = exp.to_i
     JWT.encode(payload, secret_key)
   end
