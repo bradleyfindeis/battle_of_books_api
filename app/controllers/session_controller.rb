@@ -6,13 +6,14 @@ class SessionController < ApplicationController
     result = {}
 
     # ── User session ──
-    user = current_user_from_cookie || refresh_user_session!
+    user = current_user_from_cookie || current_user_from_header || refresh_user_session!
     if user
       team = user.team
       team.resolve_book_list!
       result[:user] = UserSerializer.new(user).as_json
       result[:team] = TeamSerializer.new(team.reload, include_details: user.team_lead?).as_json
       result[:pin_reset_required] = user.pin_reset_required
+      result[:token] = AuthService.encode(user_id: user.id)
       if user.team_lead? && user.email.present?
         result[:managed_teams] = User.where(role: :team_lead, email: user.email)
                                      .includes(:team)
@@ -21,8 +22,11 @@ class SessionController < ApplicationController
     end
 
     # ── Admin session ──
-    admin = current_admin_from_cookie || refresh_admin_session!
-    result[:admin] = { id: admin.id, email: admin.email } if admin
+    admin = current_admin_from_cookie || current_admin_from_header || refresh_admin_session!
+    if admin
+      result[:admin] = { id: admin.id, email: admin.email }
+      result[:admin_token] = AdminAuthService.encode(admin_id: admin.id)
+    end
 
     render json: result
   end
