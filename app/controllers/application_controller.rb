@@ -10,17 +10,7 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_admin!
-    # #region agent log
-    from_cookie = current_admin_from_cookie
-    from_header = from_cookie ? nil : current_admin_from_header
-    from_refresh = (from_cookie || from_header) ? nil : refresh_admin_session!
-    @current_admin = from_cookie || from_header || from_refresh
-    File.open(Rails.root.join('.cursor', 'debug.log'), 'a') do |f|
-      f.puts({ location: 'application_controller.rb:authenticate_admin!', message: 'auth_check',
-               data: { from_cookie: !!from_cookie, from_header: !!from_header, from_refresh: !!from_refresh, authenticated: !!@current_admin, has_bearer: request.headers['Authorization']&.start_with?('Bearer ').present? },
-               timestamp: Time.now.to_i * 1000, hypothesisId: 'H1' }.to_json)
-    end
-    # #endregion
+    @current_admin = current_admin_from_cookie || current_admin_from_header || refresh_admin_session!
     render_unauthorized unless @current_admin
   end
 
