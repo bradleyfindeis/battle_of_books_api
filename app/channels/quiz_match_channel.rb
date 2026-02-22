@@ -4,8 +4,10 @@ class QuizMatchChannel < ApplicationCable::Channel
   def subscribed
     @match = QuizMatch.find_by(id: params[:match_id])
     if @match && @match.participant?(current_user)
+      Rails.logger.info("[QuizMatch] channel subscribed user_id=#{current_user.id} match_id=#{@match.id}")
       stream_for @match
     else
+      Rails.logger.info("[QuizMatch] channel REJECTED user_id=#{current_user&.id} match_id=#{params[:match_id]} match_found=#{@match.present?} participant=#{@match&.participant?(current_user)}")
       reject
     end
   end
