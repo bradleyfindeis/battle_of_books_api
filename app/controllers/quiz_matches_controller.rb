@@ -24,7 +24,6 @@ class QuizMatchesController < ApplicationController
 
   def pending_invite
     match = QuizMatch.pending_for_opponent(@current_user).order(created_at: :desc).first
-    Rails.logger.info("[QuizMatch] pending_invite user_id=#{@current_user.id} found=#{match.present?} match_id=#{match&.id}")
     if match
       render json: QuizMatchPayloadBuilder.build(match)
     else
@@ -76,7 +75,6 @@ class QuizMatchesController < ApplicationController
       difficulty: difficulty
     )
 
-    Rails.logger.info("[QuizMatch] create challenger_id=#{@current_user.id} invited_opponent_id=#{opponent.id} match_id=#{match.id}")
     @current_user.log_activity!
     broadcast_match_state(match)
     render json: QuizMatchPayloadBuilder.build(match), status: :created
@@ -84,12 +82,10 @@ class QuizMatchesController < ApplicationController
 
   def join
     unless @quiz_match.status_pending? && @quiz_match.invited_opponent_id == @current_user.id
-      Rails.logger.info("[QuizMatch] join REJECTED user_id=#{@current_user.id} match_id=#{@quiz_match.id} status=#{@quiz_match.status} invited_opponent_id=#{@quiz_match.invited_opponent_id}")
       render json: { errors: ['You cannot join this match'] }, status: :forbidden
       return
     end
 
-    Rails.logger.info("[QuizMatch] join START user_id=#{@current_user.id} match_id=#{@quiz_match.id}")
     @quiz_match.update!(
       opponent_id: @current_user.id,
       status: :in_progress,
@@ -97,7 +93,6 @@ class QuizMatchesController < ApplicationController
       current_question_index: 0,
       phase_entered_at: Time.current
     )
-    Rails.logger.info("[QuizMatch] join SUCCESS user_id=#{@current_user.id} match_id=#{@quiz_match.id} status=#{@quiz_match.status}")
 
     @current_user.log_activity!
     broadcast_match_state(@quiz_match)
@@ -105,7 +100,6 @@ class QuizMatchesController < ApplicationController
   end
 
   def show
-    Rails.logger.info("[QuizMatch] show user_id=#{@current_user.id} match_id=#{@quiz_match.id} status=#{@quiz_match.status}")
     render json: QuizMatchPayloadBuilder.build(@quiz_match)
   end
 
@@ -351,7 +345,6 @@ class QuizMatchesController < ApplicationController
 
   def broadcast_match_state(match, extra = {})
     payload = QuizMatchPayloadBuilder.build(match).merge(extra).stringify_keys
-    Rails.logger.info("[QuizMatch] broadcast_match_state match_id=#{match.id} status=#{match.status} phase=#{match.phase}")
     QuizMatchChannel.broadcast_to(match, payload)
   end
 end
