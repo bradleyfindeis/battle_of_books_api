@@ -36,7 +36,7 @@ gem "thruster", require: false
 # gem "rack-cors"
 
 # Authentication
-gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.22'
 gem 'jwt'
 
 # CORS (uncomment the existing line and keep it, or add this)
